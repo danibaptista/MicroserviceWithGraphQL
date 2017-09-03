@@ -1,0 +1,16 @@
+﻿{
+  "ConnectionString": "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=OrderingDb;Integrated Security=SSPI;integrated security=true;MultipleActiveResultSets=True;",
+  "IdentityUrlExternal": "http://localhost:5105/connect",
+  "EventBusConnection": "localhost",
+  "UseCustomizationData": false,
+  "Logging": {
+    "IncludeScopes": false,
+    "LogLevel": {
+      "Default": "Debug",
+      "System": "Information",
+      "Microsoft": "Information"
+    }
+  },
+  "AzureServiceBusEnabled": false,
+  "SubscriptionClientName": "Ordering"
+}

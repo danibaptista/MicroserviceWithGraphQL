@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <AssemblyName>MicroserviceArchitecture.GameOfThrones.Domain</AssemblyName>
+    <RootNamespace>MicroserviceArchitecture.GameOfThrones.Domain</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DomainDrivenDesign.Domain\DDD.Domain.Core.csproj" />
+  </ItemGroup>
+
+</Project>
