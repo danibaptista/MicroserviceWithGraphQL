@@ -1,27 +1,28 @@
 ﻿using GraphQL;
 using GraphQL.Types;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
 namespace MicroserviceArchitecture.GameOfThrones.API.Controllers
 {
-    using BusinessCommand.Commands;
-    using BusinessQuery.Queries;
+    using DDD.EventSourcing.Core.Bus;
+    using DDD.EventSourcing.Core.Commands;
     using Infrastructure.Services;
+    using MicroserviceArchitecture.GameOfThrones.BusinessQuery.Queries;
+    using MicroserviceArchitecture.GameOfThrones.Domain.WriteModel;
 
     [Route("api/v1/[controller]")]
     public class OrdersController : Controller
     {
         private readonly IDocumentExecuter _documentExecuter;
+        private readonly IEventBus _eventBus;
         private readonly IIdentityService _identityService;
-        private readonly IMediator _mediator;
         private readonly ISchema _schema;
 
-        public OrdersController(IMediator mediator, IDocumentExecuter documentExecuter, ISchema schema, IIdentityService identityService)
+        public OrdersController(IEventBus mediator, IDocumentExecuter documentExecuter, ISchema schema, IIdentityService identityService)
         {
-            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            _eventBus = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _documentExecuter = documentExecuter ?? throw new ArgumentNullException(nameof(documentExecuter));
             _schema = schema ?? throw new ArgumentNullException(nameof(schema));
             _identityService = identityService ?? throw new ArgumentNullException(nameof(identityService));
@@ -31,14 +32,28 @@ namespace MicroserviceArchitecture.GameOfThrones.API.Controllers
         [HttpPut]
         public async Task<IActionResult> CancelOrder([FromBody]CancelOrderCommand command, [FromHeader(Name = "x-requestid")] string requestId)
         {
-            bool commandResult = false;
+            var result = CommandResponse.Fail;
             if (Guid.TryParse(requestId, out Guid guid) && guid != Guid.Empty)
             {
-                var requestCancelOrder = new IdentifiedCommand<CancelOrderCommand, bool>(command, guid);
-                commandResult = await _mediator.Send(requestCancelOrder);
+                var request = new IdentifiedCommand<CancelOrderCommand, CommandResponse>(command, guid);
+                result = await _eventBus.SendCommand(request);
             }
 
-            return commandResult ? (IActionResult)Ok() : (IActionResult)BadRequest();
+            return result.Success ? (IActionResult)Ok() : (IActionResult)BadRequest();
+        }
+
+        [Route("create")]
+        [HttpPut]
+        public async Task<IActionResult> CreateOrder([FromBody]CreateOrderCommand command, [FromHeader(Name = "x-requestid")] string requestId)
+        {
+            var result = CommandResponse.Fail;
+            if (Guid.TryParse(requestId, out Guid guid) && guid != Guid.Empty)
+            {
+                var request = new IdentifiedCommand<CreateOrderCommand, CommandResponse>(command, guid);
+                result = await _eventBus.SendCommand(request);
+            }
+
+            return result.Success ? (IActionResult)Ok() : (IActionResult)BadRequest();
         }
 
         [Route("graphql")]

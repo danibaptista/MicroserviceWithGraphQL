@@ -7,6 +7,7 @@ namespace DDD.Infra.CrossCutting.Bus.Core
     using DDD.EventSourcing.Core.Commands;
     using DDD.EventSourcing.Core.Events;
     using DDD.EventSourcing.Core.Notifications;
+    using System;
 
     public sealed class InMemoryBus : IEventBus
     {
@@ -15,13 +16,13 @@ namespace DDD.Infra.CrossCutting.Bus.Core
 
         public InMemoryBus(IEventStore eventStore, IMediator mediator)
         {
-            _eventStore = eventStore;
-            _mediator = mediator;
+            _eventStore = eventStore ?? throw new ArgumentNullException(nameof(eventStore));
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         public Task PublishEvent<T>(T @event) where T : Event
         {
-            _eventStore?.Save(@event);
+            // _eventStore?.Save(@event);
 
             return _mediator.Publish(@event);
         }

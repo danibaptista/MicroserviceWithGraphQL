@@ -1,12 +1,12 @@
-// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation. All rights reserved. Licensed under the Apache License, Version
+// 2.0. See License.txt in the project root for license information.
 
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Extensions.HealthChecks
 {
@@ -58,9 +58,6 @@ namespace Microsoft.Extensions.HealthChecks
         public IReadOnlyList<HealthCheckGroup> GetGroups()
             => _builder.Groups.Values.ToList().AsReadOnly();
 
-        private IServiceScope GetServiceScope()
-            => _serviceScopeFactory == null ? new UnscopedServiceProvider(_serviceProvider) : _serviceScopeFactory.CreateScope();
-
         public async ValueTask<IHealthCheckResult> RunCheckAsync(CachedHealthCheck healthCheck, CancellationToken cancellationToken = default(CancellationToken))
         {
             using (var scope = GetServiceScope())
@@ -81,7 +78,8 @@ namespace Microsoft.Extensions.HealthChecks
         }
 
         /// <summary>
-        /// Creates a new resolution scope from the default service provider and executes the checks in the given group.
+        /// Creates a new resolution scope from the default service provider and executes the checks
+        /// in the given group.
         /// </summary>
         public async Task<CompositeHealthCheckResult> RunGroupAsync(HealthCheckGroup group, CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -106,14 +104,19 @@ namespace Microsoft.Extensions.HealthChecks
             return result;
         }
 
+        private IServiceScope GetServiceScope()
+                                            => _serviceScopeFactory == null ? new UnscopedServiceProvider(_serviceProvider) : _serviceScopeFactory.CreateScope();
+
         private class UnscopedServiceProvider : IServiceScope
         {
-            public UnscopedServiceProvider(IServiceProvider serviceProvider)
-                => ServiceProvider = serviceProvider;
-
             public IServiceProvider ServiceProvider { get; }
 
-            public void Dispose() { }
+            public UnscopedServiceProvider(IServiceProvider serviceProvider)
+                            => ServiceProvider = serviceProvider;
+
+            public void Dispose()
+            {
+            }
         }
     }
 }

@@ -1,32 +1,21 @@
 ﻿using DDD.Domain.Core.Exceptions;
-using DDD.EventSourcing.Core.Commands;
-using DDD.EventSourcing.Core.Events;
 using FluentValidation;
+using MediatR;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MicroserviceArchitecture.GameOfThrones.BusinessCommand.Decorators
+namespace MicroserviceArchitecture.GameOfThrones.Domain.WriteService.Decorators
 {
-    public class ValidatorDecorator<TRequest, TResponse>
-        : ICommandHandler<TRequest, TResponse>
-         where TRequest : Command<TResponse>
-        where TResponse : CommandResponse
+    public class ValidatorBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
-        private readonly ICommandHandler<TRequest, TResponse> inner;
-        private readonly IValidator<TRequest>[] validators;
+        private readonly IValidator<TRequest>[] _validators;
 
-        public ValidatorDecorator(
-            ICommandHandler<TRequest, TResponse> inner,
-            IValidator<TRequest>[] validators)
-        {
-            this.inner = inner;
-            this.validators = validators;
-        }
+        public ValidatorBehavior(IValidator<TRequest>[] validators) => _validators = validators;
 
-        public async Task<TResponse> Handle(TRequest message)
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next)
         {
-            var failures = validators
-                .Select(v => v.Validate(message))
+            var failures = _validators
+                .Select(v => v.Validate(request))
                 .SelectMany(result => result.Errors)
                 .Where(error => error != null)
                 .ToList();
@@ -37,8 +26,7 @@ namespace MicroserviceArchitecture.GameOfThrones.BusinessCommand.Decorators
                     $"Command Validation Errors for type {typeof(TRequest).Name}", new ValidationException("Validation exception", failures));
             }
 
-            var response = await inner.Handle(message);
-
+            var response = await next();
             return response;
         }
     }

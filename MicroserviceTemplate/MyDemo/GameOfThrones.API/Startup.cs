@@ -16,11 +16,12 @@ using System.Threading.Tasks;
 
 namespace MicroserviceArchitecture.GameOfThrones.API
 {
+    using DDD.Infrastructure;
     using GameOfThrones.Infrastructure;
     using Infrastructure;
-    using Infrastructure.AutofacModules;
     using Infrastructure.Filters;
     using Infrastructure.Services;
+    using MicroserviceArchitecture.GameOfThrones.Infra.CrossCutting.IoC.Modules;
 
     public class Startup
     {
@@ -83,6 +84,19 @@ namespace MicroserviceArchitecture.GameOfThrones.API
                 checks.AddSqlCheck("OrderingDb", Configuration["ConnectionString"], TimeSpan.FromMinutes(minutes));
             });
 
+            //services.AddEntityFrameworkSqlServer()
+            //       .AddDbContext<OrderingContext>(options =>
+            //       {
+            //           options.UseSqlServer(Configuration["ConnectionString"],
+            //               sqlServerOptionsAction: sqlOptions =>
+            //               {
+            //                   sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
+            //                   sqlOptions.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+            //               });
+            //       },
+            //           ServiceLifetime.Scoped  //Showing explicitly that the DbContext is shared across the HTTP request scope (graph of objects started in the HTTP request)
+            //       );
+
             services.Configure<OrderingSettings>(Configuration);
 
             services.AddSwaggerGen(options =>
@@ -137,6 +151,22 @@ namespace MicroserviceArchitecture.GameOfThrones.API
                       ServiceLifetime.Scoped  //Showing explicitly that the DbContext is shared across the HTTP request scope (graph of objects started in the HTTP request)
                   );
 
+            //services.AddEntityFrameworkSqlServer()
+            //     .AddDbContext<DDD.Infra.EventSourcing.Core.Contexts.EventStoreContext>(options =>
+            //     {
+            //         options.UseSqlServer(Configuration["ConnectionString"],
+            //             sqlServerOptionsAction: sqlOptions =>
+            //             {
+            //                 sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
+            //                 sqlOptions.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+            //             });
+            //     },
+            //         ServiceLifetime.Scoped  //Showing explicitly that the DbContext is shared across the HTTP request scope (graph of objects started in the HTTP request)
+            //     );
+
+            // Register the service and implementation for the database context
+            services.AddScoped<IDbContext>(provider => provider.GetService<OrderingContext>());
+
             services.AddOptions();
 
             //configure autofac
@@ -144,11 +174,8 @@ namespace MicroserviceArchitecture.GameOfThrones.API
             var container = new ContainerBuilder();
             container.Populate(services);
 
-            container.RegisterModule(new MediatorModule());
-            container.RegisterModule(new BusinessQueryModule());
-            container.RegisterModule(new BusinessCommandModule());
-            container.RegisterModule(new EventSourcingModule(services, Configuration));
-            container.RegisterModule(new InfrastructureModule());
+            container.RegisterModule(new DomainLayerModule());
+            // container.RegisterModule(new InfrastructureModule());
 
             return new AutofacServiceProvider(container.Build());
         }

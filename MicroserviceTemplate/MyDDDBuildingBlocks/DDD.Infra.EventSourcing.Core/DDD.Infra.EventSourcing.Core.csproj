@@ -13,8 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DomainDrivenDesign.Domain\DDD.Domain.Core.csproj" />
-    <ProjectReference Include="..\DomainDrivenDesign.Infrastructure\DDD.Infra.Core.csproj" />
+    <ProjectReference Include="..\DDD.Domain.Core\DDD.Domain.Core.csproj" />
+    <ProjectReference Include="..\DDD.EventSourcing.Core\DDD.EventSourcing.Core.csproj" />
+    <ProjectReference Include="..\DDD.Infra.Core\DDD.Infra.Core.csproj" />
   </ItemGroup>
 
 </Project>

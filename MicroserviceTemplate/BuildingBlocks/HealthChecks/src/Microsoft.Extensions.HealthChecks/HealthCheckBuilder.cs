@@ -1,5 +1,5 @@
-// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation. All rights reserved. Licensed under the Apache License, Version
+// 2.0. See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -11,6 +11,21 @@ namespace Microsoft.Extensions.HealthChecks
         private readonly Dictionary<string, CachedHealthCheck> _checksByName;
         private readonly HealthCheckGroup _currentGroup;
         private readonly Dictionary<string, HealthCheckGroup> _groups;
+
+        /// <summary>
+        /// Gets the registered checks, indexed by check name.
+        /// </summary>
+        public IReadOnlyDictionary<string, CachedHealthCheck> ChecksByName => _checksByName;
+
+        /// <summary>
+        /// Gets the current default cache duration used when registering checks.
+        /// </summary>
+        public TimeSpan DefaultCacheDuration { get; private set; }
+
+        /// <summary>
+        /// Gets the registered groups, indexed by group name. The root group's name is <see cref="string.Empty"/>.
+        /// </summary>
+        public IReadOnlyDictionary<string, HealthCheckGroup> Groups => _groups;
 
         public HealthCheckBuilder()
         {
@@ -40,23 +55,7 @@ namespace Microsoft.Extensions.HealthChecks
         }
 
         /// <summary>
-        /// Gets the registered checks, indexed by check name.
-        /// </summary>
-        public IReadOnlyDictionary<string, CachedHealthCheck> ChecksByName => _checksByName;
-
-        /// <summary>
-        /// Gets the current default cache duration used when registering checks.
-        /// </summary>
-        public TimeSpan DefaultCacheDuration { get; private set; }
-
-        /// <summary>
-        /// Gets the registered groups, indexed by group name. The root group's name is <see cref="string.Empty"/>.
-        /// </summary>
-        public IReadOnlyDictionary<string, HealthCheckGroup> Groups => _groups;
-
-        /// <summary>
-        /// Registers a health check type that will later be resolved via dependency
-        /// injection.
+        /// Registers a health check type that will later be resolved via dependency injection.
         /// </summary>
         public HealthCheckBuilder AddCheck<TCheck>(string checkName, TimeSpan cacheDuration) where TCheck : class, IHealthCheck
         {
@@ -89,16 +88,14 @@ namespace Microsoft.Extensions.HealthChecks
         }
 
         /// <summary>
-        /// Creates a new health check group, to which you can add one or more health
-        /// checks. Uses <see cref="CheckStatus.Unhealthy"/> when the group is
-        /// partially successful.
+        /// Creates a new health check group, to which you can add one or more health checks. Uses
+        /// <see cref="CheckStatus.Unhealthy"/> when the group is partially successful.
         /// </summary>
         public HealthCheckBuilder AddHealthCheckGroup(string groupName, Action<HealthCheckBuilder> groupChecks)
             => AddHealthCheckGroup(groupName, groupChecks, CheckStatus.Unhealthy);
 
         /// <summary>
-        /// Creates a new health check group, to which you can add one or more health
-        /// checks.
+        /// Creates a new health check group, to which you can add one or more health checks.
         /// </summary>
         public HealthCheckBuilder AddHealthCheckGroup(string groupName, Action<HealthCheckBuilder> groupChecks, CheckStatus partialSuccessStatus)
         {

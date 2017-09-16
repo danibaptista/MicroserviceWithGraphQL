@@ -5,13 +5,12 @@ using System.Threading.Tasks;
 
 namespace MicroserviceArchitecture.GameOfThrones.Infrastructure.Repositories
 {
-    using DDD.Infrastructure;
     using DDD.Infrastructure.Repositories;
     using Domain.AggregatesModel.BuyerAggregate;
     using System;
 
     public class BuyerRepository
-        : BaseRepository<Buyer, Guid, IDbContext>, IBuyerRepository
+        : BaseRepository<Buyer, Guid>, IBuyerRepository
     {
         public BuyerRepository(OrderingContext context, ILogger<BuyerRepository> logger) : base(context, logger)
         {

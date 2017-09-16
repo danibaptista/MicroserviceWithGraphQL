@@ -1,34 +1,20 @@
-﻿using DDD.EventSourcing.Core.Commands;
-using DDD.EventSourcing.Core.Events;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
-namespace MicroserviceArchitecture.GameOfThrones.BusinessCommand.Decorators
+namespace MicroserviceArchitecture.GameOfThrones.Domain.WriteService.Decorators
 {
-    public class LogDecorator<TRequest, TResponse>
-        : ICommandHandler<TRequest, TResponse>
-        where TRequest : Command<TResponse>
-        where TResponse : CommandResponse
+    public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
-        private readonly ICommandHandler<TRequest, TResponse> inner;
-        private readonly ILogger<LogDecorator<TRequest, TResponse>> logger;
+        private readonly ILogger<LoggingBehavior<TRequest, TResponse>> _logger;
 
-        public LogDecorator(
-            ICommandHandler<TRequest, TResponse> inner,
-            ILogger<LogDecorator<TRequest, TResponse>> logger)
+        public LoggingBehavior(ILogger<LoggingBehavior<TRequest, TResponse>> logger) => _logger = logger;
+
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next)
         {
-            this.inner = inner;
-            this.logger = logger;
-        }
-
-        public async Task<TResponse> Handle(TRequest message)
-        {
-            logger.LogInformation($"Executing command {inner.GetType().FullName}");
-
-            var response = await inner.Handle(message);
-
-            logger.LogInformation($"Command executed successfully {inner.GetType().FullName}");
-
+            _logger.LogInformation($"Handling {typeof(TRequest).Name}");
+            var response = await next();
+            _logger.LogInformation($"Handled {typeof(TResponse).Name}");
             return response;
         }
     }

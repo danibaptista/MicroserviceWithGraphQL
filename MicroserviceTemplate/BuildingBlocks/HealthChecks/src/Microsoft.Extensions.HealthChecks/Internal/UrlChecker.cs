@@ -1,5 +1,5 @@
-// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation. All rights reserved. Licensed under the Apache License, Version
+// 2.0. See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -14,6 +14,8 @@ namespace Microsoft.Extensions.HealthChecks.Internal
         private readonly Func<HttpResponseMessage, ValueTask<IHealthCheckResult>> _checkFunc;
         private readonly string _url;
 
+        public CheckStatus PartiallyHealthyStatus { get; set; } = CheckStatus.Warning;
+
         public UrlChecker(Func<HttpResponseMessage, ValueTask<IHealthCheckResult>> checkFunc, string url)
         {
             Guard.ArgumentNotNull(nameof(checkFunc), checkFunc);
@@ -23,7 +25,18 @@ namespace Microsoft.Extensions.HealthChecks.Internal
             _url = url;
         }
 
-        public CheckStatus PartiallyHealthyStatus { get; set; } = CheckStatus.Warning;
+        public static async ValueTask<IHealthCheckResult> DefaultUrlCheck(HttpResponseMessage response)
+        {
+            var status = response.IsSuccessStatusCode ? CheckStatus.Healthy : CheckStatus.Unhealthy;
+            var data = new Dictionary<string, object>
+            {
+                { "url", response.RequestMessage.RequestUri.ToString() },
+                { "status", (int)response.StatusCode },
+                { "reason", response.ReasonPhrase },
+                { "body", await response.Content?.ReadAsStringAsync() }
+            };
+            return HealthCheckResult.FromStatus(status, $"status code {response.StatusCode} ({(int)response.StatusCode})", data);
+        }
 
         public async Task<IHealthCheckResult> CheckAsync()
         {
@@ -42,27 +55,14 @@ namespace Microsoft.Extensions.HealthChecks.Internal
             }
         }
 
+        protected virtual HttpClient GetHttpClient()
+            => new HttpClient();
+
         private HttpClient CreateHttpClient()
         {
             var httpClient = GetHttpClient();
             httpClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue { NoCache = true };
             return httpClient;
         }
-
-        public static async ValueTask<IHealthCheckResult> DefaultUrlCheck(HttpResponseMessage response)
-        {
-            var status = response.IsSuccessStatusCode ? CheckStatus.Healthy : CheckStatus.Unhealthy;
-            var data = new Dictionary<string, object>
-            {
-                { "url", response.RequestMessage.RequestUri.ToString() },
-                { "status", (int)response.StatusCode },
-                { "reason", response.ReasonPhrase },
-                { "body", await response.Content?.ReadAsStringAsync() }
-            };
-            return HealthCheckResult.FromStatus(status, $"status code {response.StatusCode} ({(int)response.StatusCode})", data);
-        }
-
-        protected virtual HttpClient GetHttpClient()
-            => new HttpClient();
     }
 }

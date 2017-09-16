@@ -34,6 +34,7 @@ namespace MicroserviceArchitecture.GameOfThrones.API.Infrastructure
 
             using (context)
             {
+                context.Database.EnsureCreated();
                 context.Database.Migrate();
 
                 if (!context.CardTypes.Any())

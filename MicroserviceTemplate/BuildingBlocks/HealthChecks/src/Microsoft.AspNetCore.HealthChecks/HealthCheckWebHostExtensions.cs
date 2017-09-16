@@ -1,8 +1,8 @@
-// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation. All rights reserved. Licensed under the Apache License, Version
+// 2.0. See License.txt in the project root for license information.
 
-using System;
 using Microsoft.Extensions.HealthChecks;
+using System;
 
 namespace Microsoft.AspNetCore.Hosting
 {
@@ -31,7 +31,6 @@ namespace Microsoft.AspNetCore.Hosting
 
                 System.Threading.Thread.Sleep(1000);
                 loops++;
-
             } while (loops < timeout.TotalSeconds);
         }
     }

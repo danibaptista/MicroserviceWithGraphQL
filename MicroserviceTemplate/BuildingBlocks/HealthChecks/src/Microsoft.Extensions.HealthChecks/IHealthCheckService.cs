@@ -1,5 +1,5 @@
-// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation. All rights reserved. Licensed under the Apache License, Version
+// 2.0. See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -36,7 +36,8 @@ namespace Microsoft.Extensions.HealthChecks
         IReadOnlyList<HealthCheckGroup> GetGroups();
 
         /// <summary>
-        /// Creates a new resolution scope from the default service provider and executes the provided check.
+        /// Creates a new resolution scope from the default service provider and executes the
+        /// provided check.
         /// </summary>
         ValueTask<IHealthCheckResult> RunCheckAsync(CachedHealthCheck healthCheck, CancellationToken cancellationToken = default(CancellationToken));
 
@@ -46,7 +47,8 @@ namespace Microsoft.Extensions.HealthChecks
         ValueTask<IHealthCheckResult> RunCheckAsync(IServiceProvider serviceProvider, CachedHealthCheck healthCheck, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
-        /// Creates a new resolution scope from the default service provider and executes the checks in the given group.
+        /// Creates a new resolution scope from the default service provider and executes the checks
+        /// in the given group.
         /// </summary>
         Task<CompositeHealthCheckResult> RunGroupAsync(HealthCheckGroup group, CancellationToken cancellationToken = default(CancellationToken));
 

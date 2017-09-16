@@ -3,19 +3,14 @@ using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBus
 {
     public partial class InMemoryEventBusSubscriptionsManager : IEventBusSubscriptionsManager
     {
-
-
-        private readonly Dictionary<string, List<SubscriptionInfo>> _handlers;
         private readonly List<Type> _eventTypes;
-
-        public event EventHandler<string> OnEventRemoved;
+        private readonly Dictionary<string, List<SubscriptionInfo>> _handlers;
+        public bool IsEmpty => !_handlers.Keys.Any();
 
         public InMemoryEventBusSubscriptionsManager()
         {
@@ -23,8 +18,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBus
             _eventTypes = new List<Type>();
         }
 
-        public bool IsEmpty => !_handlers.Keys.Any();
-        public void Clear() => _handlers.Clear();
+        public event EventHandler<string> OnEventRemoved;
 
         public void AddDynamicSubscription<TH>(string eventName)
             where TH : IDynamicIntegrationEventHandler
@@ -39,6 +33,47 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBus
             var eventName = GetEventKey<T>();
             DoAddSubscription(typeof(TH), eventName, isDynamic: false);
             _eventTypes.Add(typeof(T));
+        }
+
+        public void Clear() => _handlers.Clear();
+
+        public string GetEventKey<T>()
+        {
+            return typeof(T).Name;
+        }
+
+        public Type GetEventTypeByName(string eventName) => _eventTypes.SingleOrDefault(t => t.Name == eventName);
+
+        public IEnumerable<SubscriptionInfo> GetHandlersForEvent<T>() where T : IntegrationEvent
+        {
+            var key = GetEventKey<T>();
+            return GetHandlersForEvent(key);
+        }
+
+        public IEnumerable<SubscriptionInfo> GetHandlersForEvent(string eventName) => _handlers[eventName];
+
+        public bool HasSubscriptionsForEvent<T>() where T : IntegrationEvent
+        {
+            var key = GetEventKey<T>();
+            return HasSubscriptionsForEvent(key);
+        }
+
+        public bool HasSubscriptionsForEvent(string eventName) => _handlers.ContainsKey(eventName);
+
+        public void RemoveDynamicSubscription<TH>(string eventName)
+            where TH : IDynamicIntegrationEventHandler
+        {
+            var handlerToRemove = FindDynamicSubscriptionToRemove<TH>(eventName);
+            DoRemoveHandler(eventName, handlerToRemove);
+        }
+
+        public void RemoveSubscription<T, TH>()
+            where TH : IIntegrationEventHandler<T>
+            where T : IntegrationEvent
+        {
+            var handlerToRemove = FindSubscriptionToRemove<T, TH>();
+            var eventName = GetEventKey<T>();
+            DoRemoveHandler(eventName, handlerToRemove);
         }
 
         private void DoAddSubscription(Type handlerType, string eventName, bool isDynamic)
@@ -64,24 +99,15 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBus
             }
         }
 
-
-        public void RemoveDynamicSubscription<TH>(string eventName)
-            where TH : IDynamicIntegrationEventHandler
+        private SubscriptionInfo DoFindSubscriptionToRemove(string eventName, Type handlerType)
         {
-            var handlerToRemove = FindDynamicSubscriptionToRemove<TH>(eventName);
-            DoRemoveHandler(eventName, handlerToRemove);
+            if (!HasSubscriptionsForEvent(eventName))
+            {
+                return null;
+            }
+
+            return _handlers[eventName].SingleOrDefault(s => s.HandlerType == handlerType);
         }
-
-
-        public void RemoveSubscription<T, TH>()
-            where TH : IIntegrationEventHandler<T>
-            where T : IntegrationEvent
-        {
-            var handlerToRemove = FindSubscriptionToRemove<T, TH>();
-            var eventName = GetEventKey<T>();
-            DoRemoveHandler(eventName, handlerToRemove);
-        }
-
 
         private void DoRemoveHandler(string eventName, SubscriptionInfo subsToRemove)
         {
@@ -98,33 +124,14 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBus
                     }
                     RaiseOnEventRemoved(eventName);
                 }
-
             }
         }
-
-        public IEnumerable<SubscriptionInfo> GetHandlersForEvent<T>() where T : IntegrationEvent
-        {
-            var key = GetEventKey<T>();
-            return GetHandlersForEvent(key);
-        }
-        public IEnumerable<SubscriptionInfo> GetHandlersForEvent(string eventName) => _handlers[eventName];
-
-        private void RaiseOnEventRemoved(string eventName)
-        {
-            var handler = OnEventRemoved;
-            if (handler != null)
-            {
-                OnEventRemoved(this, eventName);
-            }
-        }
-
 
         private SubscriptionInfo FindDynamicSubscriptionToRemove<TH>(string eventName)
             where TH : IDynamicIntegrationEventHandler
         {
             return DoFindSubscriptionToRemove(eventName, typeof(TH));
         }
-
 
         private SubscriptionInfo FindSubscriptionToRemove<T, TH>()
              where T : IntegrationEvent
@@ -134,29 +141,13 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBus
             return DoFindSubscriptionToRemove(eventName, typeof(TH));
         }
 
-        private SubscriptionInfo DoFindSubscriptionToRemove(string eventName, Type handlerType)
+        private void RaiseOnEventRemoved(string eventName)
         {
-            if (!HasSubscriptionsForEvent(eventName))
+            var handler = OnEventRemoved;
+            if (handler != null)
             {
-                return null;
+                OnEventRemoved(this, eventName);
             }
-
-            return _handlers[eventName].SingleOrDefault(s => s.HandlerType == handlerType);
-
-        }
-
-        public bool HasSubscriptionsForEvent<T>() where T : IntegrationEvent
-        {
-            var key = GetEventKey<T>();
-            return HasSubscriptionsForEvent(key);
-        }
-        public bool HasSubscriptionsForEvent(string eventName) => _handlers.ContainsKey(eventName);
-
-        public Type GetEventTypeByName(string eventName) => _eventTypes.SingleOrDefault(t => t.Name == eventName);
-
-        public string GetEventKey<T>()
-        {
-            return typeof(T).Name;
         }
     }
 }

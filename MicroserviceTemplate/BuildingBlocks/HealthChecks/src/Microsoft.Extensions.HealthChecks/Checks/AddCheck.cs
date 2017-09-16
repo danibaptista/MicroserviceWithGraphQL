@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿// Copyright (c) .NET Foundation. All rights reserved. Licensed under the Apache License, Version
+// 2.0. See License.txt in the project root for license information.
 
 using System;
 using System.Threading;
@@ -67,6 +67,20 @@ namespace Microsoft.Extensions.HealthChecks
             return builder.AddCheck(name, HealthCheck.FromTaskCheck(check), cacheDuration);
         }
 
+        public static HealthCheckBuilder AddCheck(this HealthCheckBuilder builder, string checkName, IHealthCheck check)
+        {
+            Guard.ArgumentNotNull(nameof(builder), builder);
+
+            return builder.AddCheck(checkName, check, builder.DefaultCacheDuration);
+        }
+
+        public static HealthCheckBuilder AddCheck<TCheck>(this HealthCheckBuilder builder, string name) where TCheck : class, IHealthCheck
+        {
+            Guard.ArgumentNotNull(nameof(builder), builder);
+
+            return builder.AddCheck<TCheck>(name, builder.DefaultCacheDuration);
+        }
+
         public static HealthCheckBuilder AddValueTaskCheck(this HealthCheckBuilder builder, string name, Func<ValueTask<IHealthCheckResult>> check)
         {
             Guard.ArgumentNotNull(nameof(builder), builder);
@@ -95,22 +109,6 @@ namespace Microsoft.Extensions.HealthChecks
             return builder.AddCheck(name, HealthCheck.FromValueTaskCheck(check), cacheDuration);
         }
 
-        // IHealthCheck versions of AddCheck
-
-        public static HealthCheckBuilder AddCheck(this HealthCheckBuilder builder, string checkName, IHealthCheck check)
-        {
-            Guard.ArgumentNotNull(nameof(builder), builder);
-
-            return builder.AddCheck(checkName, check, builder.DefaultCacheDuration);
-        }
-
-        // Type versions of AddCheck
-
-        public static HealthCheckBuilder AddCheck<TCheck>(this HealthCheckBuilder builder, string name) where TCheck : class, IHealthCheck
-        {
-            Guard.ArgumentNotNull(nameof(builder), builder);
-
-            return builder.AddCheck<TCheck>(name, builder.DefaultCacheDuration);
-        }
+        // IHealthCheck versions of AddCheck Type versions of AddCheck
     }
 }

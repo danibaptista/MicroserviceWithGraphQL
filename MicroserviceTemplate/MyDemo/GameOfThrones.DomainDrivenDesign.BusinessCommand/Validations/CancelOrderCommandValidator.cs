@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
 
-namespace MicroserviceArchitecture.GameOfThrones.BusinessCommand.Validations
+namespace MicroserviceArchitecture.GameOfThrones.Domain.WriteService.Validations
 {
-    using Commands;
+    using MicroserviceArchitecture.GameOfThrones.Domain.WriteModel;
 
     public class CancelOrderCommandValidator : AbstractValidator<CancelOrderCommand>
     {

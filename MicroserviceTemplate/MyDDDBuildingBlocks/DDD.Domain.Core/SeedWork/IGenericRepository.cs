@@ -41,6 +41,8 @@ namespace DDD.Domain.Core.SeedWork
 
         Task<TEntity> GetAsync(TKey id, IEnumerable<string> includes);
 
+        TEntity Post(TEntity entity);
+
         TEntity Update(TEntity entity);
     }
 }

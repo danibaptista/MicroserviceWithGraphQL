@@ -1,18 +1,19 @@
 ﻿using DDD.EventSourcing.Core.Events;
 using DDD.Infra.EventSourcing.Core.Repositories;
 using Newtonsoft.Json;
+using System;
 
 namespace DDD.Infra.EventSourcing.Core.EventSourcing
 {
     public sealed class EventStore : IEventStore
     {
         private readonly IEventStoreRepository _eventStoreRepository;
-        private readonly string _user;
+        // private readonly string _user;
 
-        public EventStore(IEventStoreRepository eventStoreRepository, string user)
+        public EventStore(IEventStoreRepository eventStoreRepository)
         {
-            _eventStoreRepository = eventStoreRepository;
-            _user = user;
+            _eventStoreRepository = eventStoreRepository ?? throw new ArgumentNullException(nameof(eventStoreRepository));
+            // _user = user;
         }
 
         public void Save<T>(T theEvent) where T : Event
@@ -22,7 +23,7 @@ namespace DDD.Infra.EventSourcing.Core.EventSourcing
             var storedEvent = new StoredEvent(
                 theEvent,
                 serializedData,
-                _user);
+                string.Empty);
 
             _eventStoreRepository.Store(storedEvent);
         }

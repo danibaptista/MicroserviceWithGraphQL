@@ -1,5 +1,4 @@
-﻿using DomainDrivenDesign.Domain.Exceptions;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
@@ -8,6 +7,7 @@ using System.Net;
 namespace MicroserviceArchitecture.GameOfThrones.API.Infrastructure.Filters
 {
     using ActionResults;
+    using DDD.Domain.Core.Exceptions;
 
     public class HttpGlobalExceptionFilter : IExceptionFilter
     {

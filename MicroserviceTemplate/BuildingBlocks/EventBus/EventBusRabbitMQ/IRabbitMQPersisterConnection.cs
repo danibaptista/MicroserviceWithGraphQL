@@ -8,8 +8,8 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ
     {
         bool IsConnected { get; }
 
-        bool TryConnect();
-
         IModel CreateModel();
+
+        bool TryConnect();
     }
 }

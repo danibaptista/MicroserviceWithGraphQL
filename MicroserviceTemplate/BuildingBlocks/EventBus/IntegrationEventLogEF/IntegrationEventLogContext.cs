@@ -1,25 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF
 {
     public class IntegrationEventLogContext : DbContext
-    {       
+    {
+        public DbSet<IntegrationEventLogEntry> IntegrationEventLogs { get; set; }
+
         public IntegrationEventLogContext(DbContextOptions<IntegrationEventLogContext> options) : base(options)
         {
         }
 
-        public DbSet<IntegrationEventLogEntry> IntegrationEventLogs { get; set; }
-
         protected override void OnModelCreating(ModelBuilder builder)
-        {          
+        {
             builder.Entity<IntegrationEventLogEntry>(ConfigureIntegrationEventLogEntry);
         }
 
-        void ConfigureIntegrationEventLogEntry(EntityTypeBuilder<IntegrationEventLogEntry> builder)
+        private void ConfigureIntegrationEventLogEntry(EntityTypeBuilder<IntegrationEventLogEntry> builder)
         {
             builder.ToTable("IntegrationEventLog");
 
@@ -42,7 +39,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF
 
             builder.Property(e => e.EventTypeName)
                 .IsRequired();
-
         }
     }
 }

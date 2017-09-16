@@ -1,5 +1,5 @@
-// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation. All rights reserved. Licensed under the Apache License, Version
+// 2.0. See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -16,13 +16,6 @@ namespace Microsoft.Extensions.HealthChecks
         private readonly CheckStatus _initialStatus;
         private readonly CheckStatus _partiallyHealthyStatus;
         private readonly Dictionary<string, IHealthCheckResult> _results = new Dictionary<string, IHealthCheckResult>(StringComparer.OrdinalIgnoreCase);
-
-        public CompositeHealthCheckResult(CheckStatus partiallyHealthyStatus = CheckStatus.Warning,
-                                          CheckStatus initialStatus = CheckStatus.Unknown)
-        {
-            _partiallyHealthyStatus = partiallyHealthyStatus;
-            _initialStatus = initialStatus;
-        }
 
         public CheckStatus CheckStatus
         {
@@ -46,8 +39,6 @@ namespace Microsoft.Extensions.HealthChecks
             }
         }
 
-        public string Description => string.Join(Environment.NewLine, _results.Select(r => $"{r.Key}: {r.Value.Description}"));
-
         public IReadOnlyDictionary<string, object> Data
         {
             get
@@ -61,7 +52,16 @@ namespace Microsoft.Extensions.HealthChecks
             }
         }
 
+        public string Description => string.Join(Environment.NewLine, _results.Select(r => $"{r.Key}: {r.Value.Description}"));
+
         public IReadOnlyDictionary<string, IHealthCheckResult> Results => _results;
+
+        public CompositeHealthCheckResult(CheckStatus partiallyHealthyStatus = CheckStatus.Warning,
+                                                                          CheckStatus initialStatus = CheckStatus.Unknown)
+        {
+            _partiallyHealthyStatus = partiallyHealthyStatus;
+            _initialStatus = initialStatus;
+        }
 
         public void Add(string name, CheckStatus status, string description)
             => Add(name, status, description, null);

@@ -16,16 +16,10 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ
         private readonly IConnectionFactory _connectionFactory;
         private readonly ILogger<DefaultRabbitMQPersistentConnection> _logger;
 
-        IConnection _connection;
-        bool _disposed;
+        private IConnection _connection;
+        private bool _disposed;
 
-        object sync_root = new object();
-
-        public DefaultRabbitMQPersistentConnection(IConnectionFactory connectionFactory,ILogger<DefaultRabbitMQPersistentConnection> logger)
-        {
-            _connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
+        private object sync_root = new object();
 
         public bool IsConnected
         {
@@ -33,6 +27,12 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ
             {
                 return _connection != null && _connection.IsOpen && !_disposed;
             }
+        }
+
+        public DefaultRabbitMQPersistentConnection(IConnectionFactory connectionFactory, ILogger<DefaultRabbitMQPersistentConnection> logger)
+        {
+            _connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public IModel CreateModel()
@@ -88,7 +88,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ
                     _connection.ConnectionBlocked += OnConnectionBlocked;
 
                     _logger.LogInformation($"RabbitMQ persistent connection acquired a connection {_connection.Endpoint.HostName} and is subscribed to failure events");
-                 
+
                     return true;
                 }
                 else
@@ -100,6 +100,15 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ
             }
         }
 
+        private void OnCallbackException(object sender, CallbackExceptionEventArgs e)
+        {
+            if (_disposed) return;
+
+            _logger.LogWarning("A RabbitMQ connection throw exception. Trying to re-connect...");
+
+            TryConnect();
+        }
+
         private void OnConnectionBlocked(object sender, ConnectionBlockedEventArgs e)
         {
             if (_disposed) return;
@@ -109,16 +118,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ
             TryConnect();
         }
 
-        void OnCallbackException(object sender, CallbackExceptionEventArgs e)
-        {
-            if (_disposed) return;
-
-            _logger.LogWarning("A RabbitMQ connection throw exception. Trying to re-connect...");
-
-            TryConnect();
-        }
-
-        void OnConnectionShutdown(object sender, ShutdownEventArgs reason)
+        private void OnConnectionShutdown(object sender, ShutdownEventArgs reason)
         {
             if (_disposed) return;
 

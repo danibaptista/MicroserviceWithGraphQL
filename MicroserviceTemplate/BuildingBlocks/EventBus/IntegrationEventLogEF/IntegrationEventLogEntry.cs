@@ -1,14 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Newtonsoft.Json;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
+using System;
 
 namespace Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF
 {
     public class IntegrationEventLogEntry
     {
-        private IntegrationEventLogEntry() { }
+        public string Content { get; private set; }
+
+        public DateTime CreationTime { get; private set; }
+
+        public Guid EventId { get; private set; }
+
+        public string EventTypeName { get; private set; }
+
+        public EventStateEnum State { get; set; }
+
+        public int TimesSent { get; set; }
+
         public IntegrationEventLogEntry(IntegrationEvent @event)
         {
             EventId = @event.Id;
@@ -18,11 +27,9 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF
             State = EventStateEnum.NotPublished;
             TimesSent = 0;
         }
-        public Guid EventId { get; private set; }
-        public string EventTypeName { get; private set; }
-        public EventStateEnum State { get; set; }
-        public int TimesSent { get; set; }
-        public DateTime CreationTime { get; private set; }
-        public string Content { get; private set; }
+
+        private IntegrationEventLogEntry()
+        {
+        }
     }
 }

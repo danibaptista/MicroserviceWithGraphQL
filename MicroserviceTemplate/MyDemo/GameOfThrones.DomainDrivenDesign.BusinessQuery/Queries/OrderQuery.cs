@@ -23,8 +23,8 @@ namespace MicroserviceArchitecture.GameOfThrones.BusinessQuery.Queries
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "id", Description = "id of the order" }),
               resolve: context =>
               {
-                  var orderId = context.GetArgument<Guid>("id");
-                  var order = orderRepository.GetAsync(orderId).Result;
+                  var orderId = Guid.TryParse(context.GetArgument<string>("id"), out var result) ? result : default(Guid);
+                  var order = orderRepository.GetAsync(orderId, "OrderStatus").Result;
                   return order;
               }
             );

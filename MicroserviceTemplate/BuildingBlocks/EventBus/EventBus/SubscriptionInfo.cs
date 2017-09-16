@@ -6,8 +6,8 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBus
     {
         public class SubscriptionInfo
         {
+            public Type HandlerType { get; }
             public bool IsDynamic { get; }
-            public Type HandlerType{ get; }
 
             private SubscriptionInfo(bool isDynamic, Type handlerType)
             {
@@ -19,6 +19,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBus
             {
                 return new SubscriptionInfo(true, handlerType);
             }
+
             public static SubscriptionInfo Typed(Type handlerType)
             {
                 return new SubscriptionInfo(false, handlerType);

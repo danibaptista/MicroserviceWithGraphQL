@@ -13,7 +13,7 @@ namespace DDD.Infra.EventSourcing.Core.Repositories
 
         public EventStoreRepository(EventStoreContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public void Dispose()

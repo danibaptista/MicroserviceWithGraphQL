@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.6</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.6.1" />
+    <PackageReference Include="FluentValidation" Version="7.1.1" />
+    <PackageReference Include="GraphQL" Version="0.17.3" />
+    <PackageReference Include="MediatR" Version="3.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MyDDDBuildingBlocks\DDD.Infra.CrossCutting.Bus.Core\DDD.Infra.CrossCutting.Bus.Core.csproj" />
+    <ProjectReference Include="..\MyDDDBuildingBlocks\DDD.Infra.EventSourcing.Core\DDD.Infra.EventSourcing.Core.csproj" />
+    <ProjectReference Include="..\MyDemo\GameOfThrones.Domain.WriteModel\GameOfThrones.Domain.WriteModel.csproj" />
+    <ProjectReference Include="..\MyDemo\GameOfThrones.DomainDrivenDesign.BusinessCommand\GameOfThrones.Domain.WriteService.csproj" />
+    <ProjectReference Include="..\MyDemo\GameOfThrones.DomainDrivenDesign.BusinessQuery\GameOfThrones.Domain.ReadService.csproj" />
+    <ProjectReference Include="..\MyDemo\GameOfThrones.EventSourcing\GameOfThrones.EventSourcing.csproj" />
+    <ProjectReference Include="..\MyDemo\GameOfThrones.Infrastructure\GameOfThrones.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

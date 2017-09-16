@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.6</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="7.1.1" />
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\MyDDDBuildingBlocks\DDD.Infra.Core\DDD.Infra.Core.csproj" />
+    <ProjectReference Include="..\DomainDrivenDesign.Domain\GameOfThrones.Domain.csproj" />
+    <ProjectReference Include="..\GameOfThrones.Domain.WriteModel\GameOfThrones.Domain.WriteModel.csproj" />
+  </ItemGroup>
+
+</Project>

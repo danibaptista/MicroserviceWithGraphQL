@@ -1,18 +1,4 @@
-﻿//using Microsoft.eShopOnContainers.BuildingBlocks.CommandBus;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Polly;
-using Polly.Retry;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
-using RabbitMQ.Client.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-
-/*
+﻿/*
 namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ
 {
     public class CommandBusRabbitMQ : ICommandBus, IDisposable
@@ -28,7 +14,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ
         private readonly Dictionary<string, IIntegrationCommandHandler> _handlers;
         private readonly Dictionary<string, Type> _typeMappings;
 
-        public CommandBusRabbitMQ(IRabbitMQPersistentConnection persistentConnection, 
+        public CommandBusRabbitMQ(IRabbitMQPersistentConnection persistentConnection,
             ILogger<CommandBusRabbitMQ> logger)
         {
             _logger = logger;
@@ -125,9 +111,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ
         {
             if (_handlers.ContainsKey(commandName))
             {
-
             }
-
         }
 
         public void Dispose()
@@ -137,9 +121,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ
                 _consumerChannel.Dispose();
             }
         }
-
-
-
     }
 }
 */

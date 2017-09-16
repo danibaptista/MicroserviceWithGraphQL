@@ -60,8 +60,8 @@ namespace MicroserviceArchitecture.GameOfThrones.Infrastructure
 
             buyerConfiguration.Ignore(b => b.DomainEvents);
 
-            buyerConfiguration.Property(b => b.Id)
-                .ForSqlServerUseSequenceHiLo("buyerseq", DEFAULT_SCHEMA);
+            //buyerConfiguration.Property(b => b.Id)
+            //    .ForSqlServerUseSequenceHiLo("buyerseq", DEFAULT_SCHEMA);
 
             buyerConfiguration.Property(b => b.IdentityGuid)
                 .HasMaxLength(200)
@@ -104,13 +104,10 @@ namespace MicroserviceArchitecture.GameOfThrones.Infrastructure
 
             orderConfiguration.Ignore(b => b.DomainEvents);
 
-            orderConfiguration.Property(o => o.Id)
-                .ForSqlServerUseSequenceHiLo("orderseq", DEFAULT_SCHEMA);
-
             orderConfiguration.Property<DateTime>("OrderDate").IsRequired();
-            orderConfiguration.Property<int?>("BuyerId").IsRequired(false);
+            orderConfiguration.Property<Guid?>("BuyerId").IsRequired(false);
             orderConfiguration.Property<int>("OrderStatusId").IsRequired();
-            orderConfiguration.Property<int?>("PaymentMethodId").IsRequired(false);
+            orderConfiguration.Property<Guid?>("PaymentMethodId").IsRequired(false);
             orderConfiguration.Property<string>("Description").IsRequired(false);
 
             var navigation = orderConfiguration.Metadata.FindNavigation(nameof(Order.OrderItems));
@@ -142,10 +139,7 @@ namespace MicroserviceArchitecture.GameOfThrones.Infrastructure
 
             orderItemConfiguration.Ignore(b => b.DomainEvents);
 
-            orderItemConfiguration.Property(o => o.Id)
-                .ForSqlServerUseSequenceHiLo("orderitemseq");
-
-            orderItemConfiguration.Property<int>("OrderId")
+            orderItemConfiguration.Property<Guid>("OrderId")
                 .IsRequired();
 
             orderItemConfiguration.Property<decimal>("Discount")
@@ -191,10 +185,7 @@ namespace MicroserviceArchitecture.GameOfThrones.Infrastructure
 
             paymentConfiguration.Ignore(b => b.DomainEvents);
 
-            paymentConfiguration.Property(b => b.Id)
-                .ForSqlServerUseSequenceHiLo("paymentseq", DEFAULT_SCHEMA);
-
-            paymentConfiguration.Property<int>("BuyerId")
+            paymentConfiguration.Property<Guid>("BuyerId")
                 .IsRequired();
 
             paymentConfiguration.Property<string>("CardHolderName")

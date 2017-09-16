@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MicroserviceArchitecture.GameOfThrones.BusinessCommand.Validations
+namespace MicroserviceArchitecture.GameOfThrones.Domain.WriteService.Validations
 {
-    using Commands;
-    using static Commands.CreateOrderCommand;
+    using MicroserviceArchitecture.GameOfThrones.Domain.WriteModel;
+    using static MicroserviceArchitecture.GameOfThrones.Domain.WriteModel.CreateOrderCommand;
 
     public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
     {

@@ -11,7 +11,7 @@ namespace DDD.Domain.Core.Models
         private List<Event> domainEvents;
         private Guid id;
         private int? requestedHashCode;
-        public IList<Event> DomainEvents => domainEvents.AsReadOnly();
+        public IList<Event> DomainEvents => domainEvents;
 
         public virtual Guid Id
         {

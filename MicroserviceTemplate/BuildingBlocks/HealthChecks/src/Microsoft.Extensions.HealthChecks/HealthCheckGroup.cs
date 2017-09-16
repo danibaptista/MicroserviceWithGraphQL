@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿// Copyright (c) .NET Foundation. All rights reserved. Licensed under the Apache License, Version
+// 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 
@@ -9,17 +9,7 @@ namespace Microsoft.Extensions.HealthChecks
     {
         private CheckStatus _partialSuccessStatus;
 
-        public HealthCheckGroup(string groupName, CheckStatus partialSuccessStatus)
-        {
-            Guard.ArgumentNotNull(nameof(groupName), groupName);
-
-            GroupName = groupName;
-            PartiallyHealthyStatus = partialSuccessStatus;
-        }
-
         public IReadOnlyList<CachedHealthCheck> Checks => ChecksInternal.AsReadOnly();
-
-        internal List<CachedHealthCheck> ChecksInternal { get; } = new List<CachedHealthCheck>();
 
         public string GroupName { get; }
 
@@ -32,6 +22,16 @@ namespace Microsoft.Extensions.HealthChecks
 
                 _partialSuccessStatus = value;
             }
+        }
+
+        internal List<CachedHealthCheck> ChecksInternal { get; } = new List<CachedHealthCheck>();
+
+        public HealthCheckGroup(string groupName, CheckStatus partialSuccessStatus)
+        {
+            Guard.ArgumentNotNull(nameof(groupName), groupName);
+
+            GroupName = groupName;
+            PartiallyHealthyStatus = partialSuccessStatus;
         }
     }
 }
